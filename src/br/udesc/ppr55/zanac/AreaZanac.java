@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 
 public class AreaZanac extends JPanel {
 	
+	private static AreaZanac instance;
 	private Nave nave;
 	private final int MOVENAVE = 7;
 	
@@ -42,8 +43,16 @@ public class AreaZanac extends JPanel {
 	private int enemiesDestroyed;
 	private int lastEnemyDestroyed;
 	
+	//synchronized evita q o mÃ©todo seja chamado simultaneamente
 	
-	public AreaZanac() {
+	public static synchronized AreaZanac getInstance() {
+		if(instance == null) {
+			instance = new AreaZanac();
+		}
+		return instance;
+	}
+	
+	private AreaZanac() {
 		
 		nave = new Nave();
 		sorteio = new Random();
@@ -328,7 +337,7 @@ public class AreaZanac extends JPanel {
 		
 		long now = System.currentTimeMillis();
 
-		if (now - lastTimeSpawned > 2000 && getWidth() > 0) { // spawn 1 inimigo a cada 2 segundos getWidth() > 0 para garantir que já está pronto para desenhar
+		if (now - lastTimeSpawned > 2000 && getWidth() > 0) { // spawn 1 inimigo a cada 2 segundos getWidth() > 0 para garantir que jï¿½ estï¿½ pronto para desenhar
 			if (sorteio.nextInt()%2==0) {
 				
 				int x;
