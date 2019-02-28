@@ -350,7 +350,7 @@ public class AreaZanac extends JPanel {
 				inimigos2.add(new Luster(x, 0, getWidth(), getHeight()));
 				
 			} else {
-				int x = sorteio.nextInt(getWidth()-20) +  20;
+				int x = sorteio.nextInt(getWidth()) +  20;
 				inimigos.add(new Duster(x, 0, getWidth(), getHeight()));
 			}
 			lastTimeSpawned = now;
