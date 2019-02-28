@@ -1,4 +1,4 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.core;
 
 import java.awt.Graphics;
 import java.awt.Image;

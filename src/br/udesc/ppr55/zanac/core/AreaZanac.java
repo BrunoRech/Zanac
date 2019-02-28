@@ -1,11 +1,13 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.core;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,17 @@ import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import br.udesc.ppr55.zanac.inimigos.Box;
+import br.udesc.ppr55.zanac.inimigos.Duster;
+import br.udesc.ppr55.zanac.inimigos.Inimigo;
+import br.udesc.ppr55.zanac.inimigos.Lead;
+import br.udesc.ppr55.zanac.inimigos.Luster;
+import br.udesc.ppr55.zanac.inimigos.PowerChip;
+import br.udesc.ppr55.zanac.inimigos.ProjetilInimigo;
+import br.udesc.ppr55.zanac.nave.Bullet;
+import br.udesc.ppr55.zanac.nave.Nave;
+import br.udesc.ppr55.zanac.nave.ProjetilNave;
 
 public class AreaZanac extends JPanel {
 	
@@ -23,18 +36,31 @@ public class AreaZanac extends JPanel {
 	private Random sorteio;
 	
 	private List<PowerChip> chips = new ArrayList<>(); 
-	private List<Duster> inimigos = new ArrayList<>();
+	/**
+	 private List<Duster> inimigos = new ArrayList<>();
 	private List<Luster> inimigos2 = new ArrayList<>();
-	private List<Lead> leadsGeral = new ArrayList<>();
 	private List<Box> boxes = new ArrayList<>(); 
+	 */
+	
+	
+	private List<Inimigo> in = new ArrayList<Inimigo>();
+	
+	private List<ProjetilInimigo> MunicaoInimigo = new ArrayList<>();
+	private List<ProjetilNave> projetil = new ArrayList<>();
+	
+	private int vidas = 4;
+	
+	
+	//testes
+	//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	//int width = ((int) screenSize.getWidth()/2);
+	//int height = ((int) screenSize.getHeight()/2);
+	
 
-	private int vidas = 3;
 	
 	private int pontos = 0;
 	private Image image1, image2;
 	private int dx = 0, dy = 0;
-	
-	private List<Bullet> bullets = new ArrayList<>();
 	
 	private long lastTimeFired = 0;
 	private long lastTimeSpawned;
@@ -57,6 +83,7 @@ public class AreaZanac extends JPanel {
 		nave = new Nave();
 		sorteio = new Random();
 		
+		morreuNave();
 		ImageIcon ii = new ImageIcon("imgs/fundo.png");
         image1 = ii.getImage();		
 
@@ -145,24 +172,19 @@ public class AreaZanac extends JPanel {
 		if (nave.isVisible())
 			g.drawImage(nave.getImage(), nave.getX(), nave.getY(), null);
 		
-		for (Bullet b:bullets) {
+		for (ProjetilNave b:projetil) {
 			b.draw(g);
 		}
 		
 		for (PowerChip pc:chips)
 			pc.draw(g);
 		
-		for (Duster dust:inimigos)
-			dust.draw(g);
-
-		for (Luster rast:inimigos2)
-			rast.draw(g);
+		for (Inimigo i: in)
+			i.draw(g);
+			
 		
-		for (Lead lead:leadsGeral)
+		for (ProjetilInimigo lead:MunicaoInimigo)
 			lead.draw(g);
-		
-		for (Box box:boxes)
-			box.draw(g);
 
 	}
 
@@ -188,38 +210,38 @@ public class AreaZanac extends JPanel {
 				  		
 			  case KeyEvent.VK_SPACE:
 			        	long now = System.currentTimeMillis();
-			        	if (now - lastTimeFired > 256 && bullets.size() == 0) {
+			        	if (now - lastTimeFired > 256 && projetil.size() == 0) {
 			        		
 			        		switch (contaPC) {
 				        		case 0:
 				        		case 1: 
 					        		if (contaPC  == 1) {
-						        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+120, nave.getY()));
+						        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+120, nave.getY()));
 					        		}
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+60, nave.getY()));
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY(), nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+60, nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY(), nave.getY()));
 					        		break;
 					        		
 				        		case 2:
 				        		case 3:
 					        		if (contaPC == 3) {
-						        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+120, nave.getY()));
-						        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+120, nave.getY()));
+						        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+120, nave.getY()));
+						        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+120, nave.getY()));
 					        		}
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));
 					        		break;
 					        		
 				        		default:
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));				        			
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+50, nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));				        			
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+50, nave.getY()));
 
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));				        			
-					        		bullets.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()-10, nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));				        			
+					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()-10, nave.getY()));
 			        		}
 			        		
 			        		lastTimeFired = now;
@@ -253,17 +275,18 @@ public class AreaZanac extends JPanel {
 			i--;
 		}
 
-		i = inimigos.size() - 1;
+		i = in.size() - 1;
 		while (i >= 0) {
-			Duster d = inimigos.get(i);
+			Inimigo d = in.get(i);
 			if (d.isVisible()) {
 				d.move();
 			} else {
-				inimigos.remove(i);
+				in.remove(i);
 			}
 			i--;
 		}
-
+/*
+ * 	TODO
 		i = inimigos2.size() - 1;
 		while (i >= 0) {
 			Luster r = inimigos2.get(i);
@@ -271,43 +294,32 @@ public class AreaZanac extends JPanel {
 				r.move();
 				Lead l = r.deixarMarcas();
 				if (l != null) {
-					leadsGeral.add(l);
+					MunicaoInimigo.add(l);
 				}
 			} else {
 				inimigos2.remove(i);
 			}
 			i--;
 		}
-
-		i = bullets.size() - 1; 
+*/
+		i = projetil.size() - 1; 
 		while (i >= 0) {
-			Bullet b = bullets.get(i);
+			ProjetilNave b = projetil.get(i);
 			if (b.isVisible()) {
 				b.move();
 			} else {
-				bullets.remove(i);
+				projetil.remove(i);
 			}
 			i--;
 		}
 		
-		i = leadsGeral.size() - 1;
+		i = MunicaoInimigo.size() - 1;
 		while (i >= 0) {
-			Lead r = leadsGeral.get(i);
+			ProjetilInimigo r = MunicaoInimigo.get(i);
 			if (r.isVisible()) {
 				r.move();
 			} else {
-				leadsGeral.remove(i);
-			}
-			i--;
-		}
-
-		i = boxes.size() - 1;
-		while (i >= 0) {
-			Box r = boxes.get(i);
-			if (r.isVisible()) {
-				r.move();
-			} else {
-				boxes.remove(i);
+				MunicaoInimigo.remove(i);
 			}
 			i--;
 		}
@@ -324,9 +336,9 @@ public class AreaZanac extends JPanel {
 			
 			int pc = sorteio.nextInt(3);
 			
-			boxes.add(new Box(x, 55, getHeight(), pc == 0));
-			boxes.add(new Box(x+55, 0, getHeight(), pc == 1));
-			boxes.add(new Box(x+110, 55, getHeight(), pc == 2));
+			in.add(new Box(x, 55, getHeight(), pc == 0));
+			in.add(new Box(x+55, 0, getHeight(), pc == 1));
+			in.add(new Box(x+110, 55, getHeight(), pc == 2));
 			
 			lastEnemyDestroyed = enemiesDestroyed;
 		}
@@ -347,11 +359,11 @@ public class AreaZanac extends JPanel {
 					x = getWidth()-48;
 				}
 				 
-				inimigos2.add(new Luster(x, 0, getWidth(), getHeight()));
+				in.add(new Luster(x, 0, getWidth(), getHeight()));
 				
 			} else {
 				int x = sorteio.nextInt(getWidth()) +  20;
-				inimigos.add(new Duster(x, 0, getWidth(), getHeight()));
+				in.add(new Duster(x, 0, getWidth(), getHeight()));
 			}
 			lastTimeSpawned = now;
 		}
@@ -372,7 +384,7 @@ public class AreaZanac extends JPanel {
             }
         }
 
-        for (Duster ini:inimigos) {
+        for (Inimigo ini:in) {
             
             Rectangle r2 = ini.getBounds();
 
@@ -382,17 +394,7 @@ public class AreaZanac extends JPanel {
             }
         }
 
-        for (Luster ini:inimigos2) {
-            
-            Rectangle r2 = ini.getBounds();
-
-            if (r3.intersects(r2)) {
-            	ini.setVisible(false);
-            	morreuNave();
-            }
-        }
-
-        for (Lead ini:leadsGeral) {
+        for (ProjetilInimigo ini:MunicaoInimigo) {
             
             Rectangle r2 = ini.getBounds();
 
@@ -402,22 +404,13 @@ public class AreaZanac extends JPanel {
             }
         }
         
-        for (Box box:boxes) {
-            
-            Rectangle r2 = box.getBounds();
 
-            if (r3.intersects(r2)) {
-            	box.setVisible(false);
-            	morreuNave();
-            }
-        }
-
-        for (Bullet b : bullets) {
+        for (ProjetilNave b : projetil) {
 
             Rectangle r1 = b.getBounds();
 
             if (b.isVisible()) {
-	            for (Duster d:inimigos) {
+	            for (Inimigo d :in) {
 	
 	                Rectangle r2 = d.getBounds();
 	
@@ -426,25 +419,13 @@ public class AreaZanac extends JPanel {
 	                    b.setVisible(false);
 	                    d.destruir();
 	                    
-	                    pontos += 60;
+	                    pontos += d.getPontos();
 	                    enemiesDestroyed++;
 	                }
 	            }
-	            for (Luster d:inimigos2) {
-	            	
-	                Rectangle r2 = d.getBounds();
-	
-	                if (!d.isDestruido() && r1.intersects(r2)) {
-	                    
-	                    b.setVisible(false);
-	                    d.destruir();
-	                    
-	                    pontos += 500;
-	                    enemiesDestroyed++;
-	                }
-	            }
-
-	            for (Box box:boxes) {
+/*TODO
+ * 
+ *       for (Box box:boxes) {
 	            	
 	                Rectangle r2 = box.getBounds();
 	
@@ -463,6 +444,8 @@ public class AreaZanac extends JPanel {
 	                    
 	                }
 	            }
+ * */
+	      
             }
         }
     }

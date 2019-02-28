@@ -1,4 +1,6 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.inimigos;
+
+import br.udesc.ppr55.zanac.core.Sprite;
 
 public class PowerChip extends Sprite {
 

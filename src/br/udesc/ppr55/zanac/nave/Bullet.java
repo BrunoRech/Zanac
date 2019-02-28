@@ -1,8 +1,10 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.nave;
 
 import java.awt.Graphics;
 
-public class Bullet extends Sprite {
+import br.udesc.ppr55.zanac.core.Sprite;
+
+public class Bullet extends ProjetilNave {
 
 	private int yMin;
 	private final int BULLET_SPEED = 8;

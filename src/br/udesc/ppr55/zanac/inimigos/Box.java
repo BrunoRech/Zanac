@@ -1,6 +1,7 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.inimigos;
 
-public class Box extends Sprite {
+
+public class Box extends Inimigo {
 
 	private boolean temPC;
 	private int hArea;
@@ -22,19 +23,28 @@ public class Box extends Sprite {
 		}
 
 	}
-
-	public PowerChip destruir() {
+	
+	@Override
+	public void destruir() {
 		this.destruido++;
 		setVisible(destruido == 2);
 		if (destruido == 2 && temPC) {
-			return new PowerChip(getX(), getY(), 0, hArea);
-		} else {
-			return null;
+			PowerChip pc = new PowerChip(getX(), getY(), 0, hArea);
+			//add PowerShip na area zanac
 		}
 	}
+	
+/*	public PowerChip destruir() {
+	} * */
 
 	public boolean isDestruido() {
 		return destruido == 2;
+	}
+
+	@Override
+	public int getPontos() {
+
+		return (temPC?500:300);
 	}
 
 }

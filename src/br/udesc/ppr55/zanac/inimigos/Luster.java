@@ -1,15 +1,17 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.inimigos;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Luster extends Sprite {
+import br.udesc.ppr55.zanac.core.Sprite;
+
+public class Luster extends Inimigo {
 
 	private int hArea;
 	private int wArea;
 
 	private int speed = 3;
-	private boolean destruido;
+
 	private int contaDestruido;
 	private int parou;
 
@@ -21,7 +23,7 @@ public class Luster extends Sprite {
 
 	@Override
 	public void move() {
-		if (destruido) {
+		if (isDestruido()) {
 			contaDestruido++;
 			if (contaDestruido == 10) {
 				setVisible(false);
@@ -41,16 +43,6 @@ public class Luster extends Sprite {
 				}
 			}
 	}
-
-	public boolean isDestruido() {
-		return destruido;
-	}
-
-	public void destruir() {
-		setImage("imgs/explosao.png");
-
-		this.destruido = true;	
-	}
 	
 	@Override
 	public <T extends Sprite> T deixarMarcas() {
@@ -62,5 +54,10 @@ public class Luster extends Sprite {
 			parou++;
 		}
 		return (T) l;
+	}
+
+	@Override
+	public int getPontos() {
+		return 500;
 	}
 }

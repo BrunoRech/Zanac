@@ -1,4 +1,4 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.inimigos;
 
 import java.awt.Shape;
 import java.awt.geom.Path2D;
@@ -7,7 +7,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Duster extends Sprite {
+import br.udesc.ppr55.zanac.core.Sprite;
+
+public class Duster extends Inimigo {
 
 	private final int DUSTER_SPEED = 2;
 
@@ -52,12 +54,11 @@ public class Duster extends Sprite {
 	private Point2D pos;
 	private int index;
 
-	private boolean destruido;
 	private int contaDestruido;
 
 	@Override
 	public void move() {
-		if (!destruido) {
+		if (!isDestruido()) {
 
 			if (index < points.size()) {
 				pos = points.get(index);
@@ -83,14 +84,9 @@ public class Duster extends Sprite {
 		return angle;
 	}
 
-	public void destruir() {
-		setImage("imgs/explosao.png");
-
-		this.destruido = true;
-	}
-
-	public boolean isDestruido() {
-		return destruido;
+	@Override
+	public int getPontos() {
+		return 60;
 	}
 
 }

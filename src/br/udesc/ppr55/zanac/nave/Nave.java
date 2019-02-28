@@ -1,4 +1,6 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.nave;
+
+import br.udesc.ppr55.zanac.core.Sprite;
 
 public class Nave extends Sprite {
 

@@ -1,6 +1,7 @@
-package br.udesc.ppr55.zanac;
+package br.udesc.ppr55.zanac.inimigos;
 
-public class Lead extends Sprite {
+
+public class Lead extends ProjetilInimigo {
 
 	private int speed;
 	private int hArea;
