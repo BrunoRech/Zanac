@@ -1,5 +1,7 @@
 package br.udesc.ppr55.zanac.inimigos;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Box extends Inimigo {
 
@@ -30,12 +32,10 @@ public class Box extends Inimigo {
 		setVisible(destruido == 2);
 		if (destruido == 2 && temPC) {
 			PowerChip pc = new PowerChip(getX(), getY(), 0, hArea);
-			//add PowerShip na area zanac
+			notificarDestruidoComPowerChip(getPontos(), new ArrayList<PowerChip>(Arrays.asList(pc)));
 		}
 	}
 	
-/*	public PowerChip destruir() {
-	} * */
 
 	public boolean isDestruido() {
 		return destruido == 2;

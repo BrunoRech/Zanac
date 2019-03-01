@@ -27,7 +27,7 @@ import br.udesc.ppr55.zanac.nave.Bullet;
 import br.udesc.ppr55.zanac.nave.Nave;
 import br.udesc.ppr55.zanac.nave.ProjetilNave;
 
-public class AreaZanac extends JPanel {
+public class AreaZanac extends JPanel implements Observador{
 	
 	private static AreaZanac instance;
 	private Nave nave;
@@ -418,34 +418,9 @@ public class AreaZanac extends JPanel {
 	                    
 	                    b.setVisible(false);
 	                    d.destruir();
-	                    
-	                    pontos += d.getPontos();
-	                    enemiesDestroyed++;
+
 	                }
 	            }
-/*TODO
- * 
- *       for (Box box:boxes) {
-	            	
-	                Rectangle r2 = box.getBounds();
-	
-	                if (!box.isDestruido() && r1.intersects(r2)) {
-	                    
-	                    b.setVisible(false);
-	                    PowerChip pc = box.destruir();
-	                    if (pc != null) {
-	                    	chips.add(pc);
-	                    	pontos += 500;
-	                    } else {
-	                    	if (!box.isVisible())
-	                    		pontos += 300;
-	                    }
-	                    
-	                    
-	                }
-	            }
- * */
-	      
             }
         }
     }
@@ -460,5 +435,18 @@ public class AreaZanac extends JPanel {
 		this.contaPC = 0;
 		this.enemiesDestroyed = 0;
 		this.lastEnemyDestroyed = 0;
+	}
+
+	@Override
+	public void destruidoComPowerShip(int pontos, List<PowerChip> pcs) {
+		chips.addAll(pcs);
+		enemiesDestroyed++;
+		this.pontos += pontos;
+	}
+
+	@Override
+	public void destruido(int pontos) {
+		enemiesDestroyed++;
+        this.pontos += pontos;
 	}
 }
