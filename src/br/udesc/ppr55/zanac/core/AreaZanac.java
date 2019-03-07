@@ -1,13 +1,11 @@
 package br.udesc.ppr55.zanac.core;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,44 +17,26 @@ import javax.swing.JPanel;
 import br.udesc.ppr55.zanac.inimigos.Box;
 import br.udesc.ppr55.zanac.inimigos.Duster;
 import br.udesc.ppr55.zanac.inimigos.Inimigo;
-import br.udesc.ppr55.zanac.inimigos.Lead;
+import br.udesc.ppr55.zanac.inimigos.BalaInimigo;
 import br.udesc.ppr55.zanac.inimigos.Luster;
 import br.udesc.ppr55.zanac.inimigos.PowerChip;
-import br.udesc.ppr55.zanac.inimigos.ProjetilInimigo;
+import br.udesc.ppr55.zanac.nave.BalaNave;
 import br.udesc.ppr55.zanac.nave.Bullet;
 import br.udesc.ppr55.zanac.nave.Nave;
-import br.udesc.ppr55.zanac.nave.ProjetilNave;
 
-public class AreaZanac extends JPanel implements Observador{
+public class AreaZanac extends JPanel implements Observador {
 	
-	private static AreaZanac instance;
 	private Nave nave;
 	private final int MOVENAVE = 7;
 	
 	private Random sorteio;
-	
-	private List<PowerChip> chips = new ArrayList<>(); 
-	/**
-	 private List<Duster> inimigos = new ArrayList<>();
-	private List<Luster> inimigos2 = new ArrayList<>();
-	private List<Box> boxes = new ArrayList<>(); 
-	 */
-	
-	
-	private List<Inimigo> in = new ArrayList<Inimigo>();
-	
-	private List<ProjetilInimigo> MunicaoInimigo = new ArrayList<>();
-	private List<ProjetilNave> projetil = new ArrayList<>();
-	
-	private int vidas = 4;
-	
-	
-	//testes
-	//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	//int width = ((int) screenSize.getWidth()/2);
-	//int height = ((int) screenSize.getHeight()/2);
-	
 
+	private List<PowerChip> chips = new ArrayList<>(); 
+	private List<Inimigo> inimigos = new ArrayList<>();
+	private List<BalaInimigo> balasInimigos = new ArrayList<>();
+	private List<BalaNave> balasNave = new ArrayList<>();
+
+	private int vidas = 3;
 	
 	private int pontos = 0;
 	private Image image1, image2;
@@ -69,9 +49,9 @@ public class AreaZanac extends JPanel implements Observador{
 	private int enemiesDestroyed;
 	private int lastEnemyDestroyed;
 	
-	//synchronized evita q o mÃ©todo seja chamado simultaneamente
+	private static AreaZanac instance;
 	
-	public static synchronized AreaZanac getInstance() {
+	public static AreaZanac getInstance() {
 		if(instance == null) {
 			instance = new AreaZanac();
 		}
@@ -83,7 +63,6 @@ public class AreaZanac extends JPanel implements Observador{
 		nave = new Nave();
 		sorteio = new Random();
 		
-		morreuNave();
 		ImageIcon ii = new ImageIcon("imgs/fundo.png");
         image1 = ii.getImage();		
 
@@ -172,20 +151,18 @@ public class AreaZanac extends JPanel implements Observador{
 		if (nave.isVisible())
 			g.drawImage(nave.getImage(), nave.getX(), nave.getY(), null);
 		
-		for (ProjetilNave b:projetil) {
+		for (BalaNave b:balasNave) {
 			b.draw(g);
 		}
 		
 		for (PowerChip pc:chips)
 			pc.draw(g);
 		
-		for (Inimigo i: in)
-			i.draw(g);
-			
+		for (Inimigo inimigo:inimigos)
+			inimigo.draw(g);
 		
-		for (ProjetilInimigo lead:MunicaoInimigo)
+		for (BalaInimigo lead:balasInimigos)
 			lead.draw(g);
-
 	}
 
 	public void processInput(List<Integer> presseds) {
@@ -210,38 +187,38 @@ public class AreaZanac extends JPanel implements Observador{
 				  		
 			  case KeyEvent.VK_SPACE:
 			        	long now = System.currentTimeMillis();
-			        	if (now - lastTimeFired > 256 && projetil.size() == 0) {
+			        	if (now - lastTimeFired > 256 && balasNave.size() == 0) {
 			        		
 			        		switch (contaPC) {
 				        		case 0:
 				        		case 1: 
 					        		if (contaPC  == 1) {
-						        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+120, nave.getY()));
+						        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+120, nave.getY()));
 					        		}
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+60, nave.getY()));
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY(), nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+60, nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY(), nave.getY()));
 					        		break;
 					        		
 				        		case 2:
 				        		case 3:
 					        		if (contaPC == 3) {
-						        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+120, nave.getY()));
-						        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+120, nave.getY()));
+						        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+120, nave.getY()));
+						        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+120, nave.getY()));
 					        		}
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));
 					        		break;
 					        		
 				        		default:
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));				        			
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+50, nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY()+60, nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY()+60, nave.getY()));				        			
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()+50, nave.getY()));
 
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));				        			
-					        		projetil.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()-10, nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-10, nave.getY(), nave.getY()));
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)+2, nave.getY(), nave.getY()));				        			
+					        		balasNave.add(new Bullet((nave.getX() + nave.getWidth()/2)-4, nave.getY()-10, nave.getY()));
 			        		}
 			        		
 			        		lastTimeFired = now;
@@ -275,51 +252,35 @@ public class AreaZanac extends JPanel implements Observador{
 			i--;
 		}
 
-		i = in.size() - 1;
+		i = inimigos.size() - 1;
 		while (i >= 0) {
-			Inimigo d = in.get(i);
-			if (d.isVisible()) {
-				d.move();
+			Inimigo inimigo = inimigos.get(i);
+			if (inimigo.isVisible()) {
+				inimigo.move();
 			} else {
-				in.remove(i);
+				inimigos.remove(i);
 			}
 			i--;
 		}
-/*
- * 	TODO
-		i = inimigos2.size() - 1;
+
+		i = balasNave.size() - 1; 
 		while (i >= 0) {
-			Luster r = inimigos2.get(i);
-			if (r.isVisible()) {
-				r.move();
-				Lead l = r.deixarMarcas();
-				if (l != null) {
-					MunicaoInimigo.add(l);
-				}
-			} else {
-				inimigos2.remove(i);
-			}
-			i--;
-		}
-*/
-		i = projetil.size() - 1; 
-		while (i >= 0) {
-			ProjetilNave b = projetil.get(i);
+			BalaNave b = balasNave.get(i);
 			if (b.isVisible()) {
 				b.move();
 			} else {
-				projetil.remove(i);
+				balasNave.remove(i);
 			}
 			i--;
 		}
 		
-		i = MunicaoInimigo.size() - 1;
+		i = balasInimigos.size() - 1;
 		while (i >= 0) {
-			ProjetilInimigo r = MunicaoInimigo.get(i);
+			BalaInimigo r = balasInimigos.get(i);
 			if (r.isVisible()) {
 				r.move();
 			} else {
-				MunicaoInimigo.remove(i);
+				balasInimigos.remove(i);
 			}
 			i--;
 		}
@@ -336,9 +297,9 @@ public class AreaZanac extends JPanel implements Observador{
 			
 			int pc = sorteio.nextInt(3);
 			
-			in.add(new Box(x, 55, getHeight(), pc == 0));
-			in.add(new Box(x+55, 0, getHeight(), pc == 1));
-			in.add(new Box(x+110, 55, getHeight(), pc == 2));
+			adicionarInimigo(new Box(x, 55, getHeight(), pc == 0));
+			adicionarInimigo(new Box(x+55, 0, getHeight(), pc == 1));
+			adicionarInimigo(new Box(x+110, 55, getHeight(), pc == 2));
 			
 			lastEnemyDestroyed = enemiesDestroyed;
 		}
@@ -349,7 +310,7 @@ public class AreaZanac extends JPanel implements Observador{
 		
 		long now = System.currentTimeMillis();
 
-		if (now - lastTimeSpawned > 2000 && getWidth() > 0) { // spawn 1 inimigo a cada 2 segundos getWidth() > 0 para garantir que jï¿½ estï¿½ pronto para desenhar
+		if (now - lastTimeSpawned > 2000 && getWidth() > 0) { // spawn 1 inimigo a cada 2 segundos getWidth() > 0 para garantir que já está pronto para desenhar
 			if (sorteio.nextInt()%2==0) {
 				
 				int x;
@@ -359,11 +320,11 @@ public class AreaZanac extends JPanel implements Observador{
 					x = getWidth()-48;
 				}
 				 
-				in.add(new Luster(x, 0, getWidth(), getHeight()));
+				adicionarInimigo(new Luster(x, 0, getWidth(), getHeight()));
 				
 			} else {
-				int x = sorteio.nextInt(getWidth()) +  20;
-				in.add(new Duster(x, 0, getWidth(), getHeight()));
+				int x = sorteio.nextInt(getWidth()-20) +  20;
+				adicionarInimigo(new Duster(x, 0, getWidth(), getHeight()));
 			}
 			lastTimeSpawned = now;
 		}
@@ -384,7 +345,17 @@ public class AreaZanac extends JPanel implements Observador{
             }
         }
 
-        for (Inimigo ini:in) {
+        for (Inimigo inimigo:inimigos) {
+            
+            Rectangle r2 = inimigo.getBounds();
+
+            if (r3.intersects(r2)) {
+            	inimigo.setVisible(false);
+            	morreuNave();
+            }
+        }
+
+        for (BalaInimigo ini:balasInimigos) {
             
             Rectangle r2 = ini.getBounds();
 
@@ -394,36 +365,31 @@ public class AreaZanac extends JPanel implements Observador{
             }
         }
 
-        for (ProjetilInimigo ini:MunicaoInimigo) {
-            
-            Rectangle r2 = ini.getBounds();
-
-            if (r3.intersects(r2)) {
-            	ini.setVisible(false);
-            	morreuNave();
-            }
-        }
         
-
-        for (ProjetilNave b : projetil) {
-
-            Rectangle r1 = b.getBounds();
-
+        this.checkCollisionsBalaNave();
+    }
+	
+	/** Verifica as colisões das balas disparadas pela nave com os inimigos da área Zanac */
+	private void checkCollisionsBalaNave() {
+        for (BalaNave b : balasNave) {
+        	
             if (b.isVisible()) {
-	            for (Inimigo d :in) {
-	
-	                Rectangle r2 = d.getBounds();
-	
-	                if (!d.isDestruido() && r1.intersects(r2)) {
-	                    
+                Rectangle r1 = b.getBounds();
+                
+	            for (Inimigo inimigo:inimigos) {
+	                Rectangle r2 = inimigo.getBounds();
+	                
+	                if (!inimigo.isDestruido() && r1.intersects(r2)) {
 	                    b.setVisible(false);
-	                    d.destruir();
-
+	                    
+	                    //Aumenta em uma unidade (1) a quantidade de tiros recebidos pelo inimigo
+	                    //e o destrói se ele não tiver mais vidas
+	                    inimigo.receberTiro();
 	                }
 	            }
             }
         }
-    }
+	}
 
 	private void morreuNave() {
 		vidas--;
@@ -436,17 +402,27 @@ public class AreaZanac extends JPanel implements Observador{
 		this.enemiesDestroyed = 0;
 		this.lastEnemyDestroyed = 0;
 	}
-
+	
 	@Override
 	public void destruidoComPowerShip(int pontos, List<PowerChip> pcs) {
 		chips.addAll(pcs);
 		enemiesDestroyed++;
 		this.pontos += pontos;
 	}
-
+	
 	@Override
 	public void destruido(int pontos) {
 		enemiesDestroyed++;
         this.pontos += pontos;
 	}
+	
+	/**
+	 * Adiciona um inimigo à área Zanac.
+	 * @param inimigo
+	 */
+	private void adicionarInimigo(Inimigo inimigo) {
+		inimigo.anexar(this);
+		this.inimigos.add(inimigo);
+	}
+	
 }

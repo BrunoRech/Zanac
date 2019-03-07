@@ -7,8 +7,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.udesc.ppr55.zanac.core.Sprite;
-
 public class Duster extends Inimigo {
 
 	private final int DUSTER_SPEED = 2;

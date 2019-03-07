@@ -10,28 +10,70 @@ public abstract class Inimigo extends Sprite{
 	
 	private List<Observador> observadores = new ArrayList<Observador>();
 	private boolean destruido;
-
+	
+	/** Contador que indica quantos tiros o inimigo recebeu. Inicia em 0 (zero) */
+	private int tirosRecebidos;
+	
 	public Inimigo(int x, int y, String imageName) {
 		super(x, y, imageName);
-		// TODO Auto-generated constructor stub
+		destruido = false;
+		tirosRecebidos = 0;
+	}
+
+	public abstract int getPontos();
+		
+	/** @return Quantidade de vidas do inimigo. Ou seja, a quantidade de balas que a nave precisa acertar para destruí-lo */
+	public int getVidas() {
+		return 1;
 	}
 	
-	public abstract int getPontos();
+	/** Método auxiliar para incrementar em 1 (um) o número de tiros recebidos pelo inimigo */
+	public void receberTiro() {
+		receberTiros(1);
+	}
 	
+	/**
+	 * Método auxiliar para incrementar em <i>tiros</i> vezes o número de tiros recebidos pelo inimigo.
+	 * Após incrementar o número de tiros recebidos, é verificado se o inimigo deve ser destruído
+	 * @param tiros
+	 */
+	public void receberTiros(int tiros) {
+		tirosRecebidos += tiros;
+		verificarVidas();
+	}
+
+	/** Verifica se o inimigo não possui mais vidas. Nesse caso, ele deve ser destruído */
+	public void verificarVidas() {
+		if(!possuiVidas()) {
+			this.destruir();
+		}
+	}
 	
+	/**
+	 * Verifica se o inimigo ainda possui vidas, de acordo com o número total de vidas, definidos em "this.getVidas()",
+	 * e de acordo com o númeto total de tiros recebidos, definido em "this.tirosRecebidos".
+	 * @return Verdadeiro se o inimigo possui vidas, e Falso caso contrário.
+	 */
+	public boolean possuiVidas() {
+		return getVidas() > tirosRecebidos;
+	}
+
 	public void destruir() {
 		setImage("imgs/explosao.png");
-		this.destruido = true;
+		setDestruido(true);
 		notificarDestruido(getPontos());
+	}
+	
+	protected void setDestruido(boolean destruido) {
+		this.destruido = destruido;
 	}
 
 	public boolean isDestruido() {
 		return destruido;
 	}
 	
-	
 	public void anexar(Observador observador) {
-		
+		observadores.add(observador);
 	}
 	
 	public void notificarDestruidoComPowerChip(int pontos, List<PowerChip> pcs) {
@@ -45,4 +87,5 @@ public abstract class Inimigo extends Sprite{
 			obs.destruido(pontos);
 		}
 	}
+	
 }

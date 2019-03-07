@@ -1,8 +1,5 @@
 package br.udesc.ppr55.zanac.inimigos;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import br.udesc.ppr55.zanac.core.Sprite;
 
 public class Luster extends Inimigo {

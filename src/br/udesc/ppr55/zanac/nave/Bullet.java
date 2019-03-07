@@ -4,7 +4,7 @@ import java.awt.Graphics;
 
 import br.udesc.ppr55.zanac.core.Sprite;
 
-public class Bullet extends ProjetilNave {
+public class Bullet extends BalaNave {
 
 	private int yMin;
 	private final int BULLET_SPEED = 8;
