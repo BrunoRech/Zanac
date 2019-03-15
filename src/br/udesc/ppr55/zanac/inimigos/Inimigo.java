@@ -22,19 +22,19 @@ public abstract class Inimigo extends Sprite{
 
 	public abstract int getPontos();
 		
-	/** @return Quantidade de vidas do inimigo. Ou seja, a quantidade de balas que a nave precisa acertar para destruí-lo */
+	/** @return Quantidade de vidas do inimigo. Ou seja, a quantidade de balas que a nave precisa acertar para destruï¿½-lo */
 	public int getVidas() {
 		return 1;
 	}
 	
-	/** Método auxiliar para incrementar em 1 (um) o número de tiros recebidos pelo inimigo */
+	/** Mï¿½todo auxiliar para incrementar em 1 (um) o nï¿½mero de tiros recebidos pelo inimigo */
 	public void receberTiro() {
 		receberTiros(1);
 	}
 	
 	/**
-	 * Método auxiliar para incrementar em <i>tiros</i> vezes o número de tiros recebidos pelo inimigo.
-	 * Após incrementar o número de tiros recebidos, é verificado se o inimigo deve ser destruído
+	 * Mï¿½todo auxiliar para incrementar em <i>tiros</i> vezes o nï¿½mero de tiros recebidos pelo inimigo.
+	 * Apï¿½s incrementar o nï¿½mero de tiros recebidos, ï¿½ verificado se o inimigo deve ser destruï¿½do
 	 * @param tiros
 	 */
 	public void receberTiros(int tiros) {
@@ -42,7 +42,7 @@ public abstract class Inimigo extends Sprite{
 		verificarVidas();
 	}
 
-	/** Verifica se o inimigo não possui mais vidas. Nesse caso, ele deve ser destruído */
+	/** Verifica se o inimigo nï¿½o possui mais vidas. Nesse caso, ele deve ser destruï¿½do */
 	public void verificarVidas() {
 		if(!possuiVidas()) {
 			this.destruir();
@@ -50,9 +50,9 @@ public abstract class Inimigo extends Sprite{
 	}
 	
 	/**
-	 * Verifica se o inimigo ainda possui vidas, de acordo com o número total de vidas, definidos em "this.getVidas()",
-	 * e de acordo com o númeto total de tiros recebidos, definido em "this.tirosRecebidos".
-	 * @return Verdadeiro se o inimigo possui vidas, e Falso caso contrário.
+	 * Verifica se o inimigo ainda possui vidas, de acordo com o nï¿½mero total de vidas, definidos em "this.getVidas()",
+	 * e de acordo com o nï¿½meto total de tiros recebidos, definido em "this.tirosRecebidos".
+	 * @return Verdadeiro se o inimigo possui vidas, e Falso caso contrï¿½rio.
 	 */
 	public boolean possuiVidas() {
 		return getVidas() > tirosRecebidos;
@@ -85,6 +85,13 @@ public abstract class Inimigo extends Sprite{
 	public void notificarDestruido(int pontos) {
 		for (Observador obs: observadores) {
 			obs.destruido(pontos);
+		}
+	}
+	
+	public void notificarSoltouProjetilInimigo(List<ProjetilInimigo> projeteis) {
+		
+		for (Observador obs: observadores) {
+			obs.soltouProjetilInimigo(projeteis);
 		}
 	}
 	

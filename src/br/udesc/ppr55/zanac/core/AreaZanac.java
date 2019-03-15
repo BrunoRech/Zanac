@@ -308,7 +308,6 @@ public class AreaZanac extends JPanel implements Observador {
 	private void spawnInimigos() {
 
 		long now = System.currentTimeMillis();
-
 		if (now - lastTimeSpawned > 2000 && getWidth() > 0) { // spawn 1 inimigo a cada 2 segundos getWidth() > 0 para
 																// garantir que j� est� pronto para desenhar
 			if (sorteio.nextInt() % 2 == 0) {
@@ -323,7 +322,7 @@ public class AreaZanac extends JPanel implements Observador {
 				adicionarInimigo(new Luster(x, 0, getWidth(), getHeight()));
 
 			} else {
-				int x = sorteio.nextInt(getWidth() - 0) + 20;
+				int x = sorteio.nextInt((getWidth() - 20)) + 20;
 				adicionarInimigo(new Duster(x, 0, getWidth(), getHeight()));
 			}
 			lastTimeSpawned = now;
@@ -426,6 +425,12 @@ public class AreaZanac extends JPanel implements Observador {
 	private void adicionarInimigo(Inimigo inimigo) {
 		inimigo.anexar(this);
 		this.inimigos.add(inimigo);
+	}
+
+	@Override
+	public void soltouProjetilInimigo(List<ProjetilInimigo> projeteis) {
+		projetilInimigos.addAll(projeteis);
+		
 	}
 
 }

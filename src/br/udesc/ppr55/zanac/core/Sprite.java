@@ -126,7 +126,4 @@ public abstract class Sprite {
     	return hArea;
     }
     
-    public <T extends Sprite> T deixarMarcas() {
-    	return null;
-    }
 }

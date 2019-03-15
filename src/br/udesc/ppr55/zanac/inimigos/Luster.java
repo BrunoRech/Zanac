@@ -1,5 +1,8 @@
 package br.udesc.ppr55.zanac.inimigos;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import br.udesc.ppr55.zanac.core.Sprite;
 
 public class Luster extends Inimigo {
@@ -25,32 +28,25 @@ public class Luster extends Inimigo {
 			if (contaDestruido == 10) {
 				setVisible(false);
 			}
-		} else 
-			if (getY() < hArea/2) {
-				move(0, speed);
+		} else if (getY() < hArea / 2) {
+			move(0, speed);
+		} else {
+			if (parou == 0) {
+				parou = 1;
 			} else {
-				if (parou == 0) {
-					parou = 1;
+				if (parou < 100) {
+					parou++;
 				} else {
-					if (parou < 100) {
-						parou++;
-					} else {
-						move(0, speed);
-					}
+					move(0, speed);
 				}
 			}
-	}
-	
-	@Override
-	public <T extends Sprite> T deixarMarcas() {
-		Lead l = null;
-		
-		if (parou == 1 || parou == 50) {
-			
-			l = new Lead(getX(), getY(), wArea, hArea, getX() == 20);
-			parou++;
+			if (parou == 1 || parou == 50) {
+
+				Lead lead = new Lead(getX(), getY(), wArea, hArea, getX() == 20);
+				parou++;
+				notificarSoltouProjetilInimigo(new ArrayList<ProjetilInimigo>(Arrays.asList(lead)));
+			}
 		}
-		return (T) l;
 	}
 
 	@Override
